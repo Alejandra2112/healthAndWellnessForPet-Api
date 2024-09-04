@@ -13,15 +13,160 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//Modelo de Usuarios
 model User {
-  idUser    Int     @default(autoincrement()) @id
-  email String  @unique
-  typeDocument String
-  document String @unique
-  name  String?
-  lastname String?
-  phone String
-  address String
-  password String 
+  idUser           Int           @id @default(autoincrement())
+  name             String?
+  lastname         String?
+  typeDocument     String
+  document         String        @unique
+  phone            String
+  email            String        @unique
+  password         String
+  status           Boolean
+  idRole           Int
+  clients          Client[]
+  appointments     Appointments[]
+  adoptions        Adoptions[]
+  shoppingCarts    ShoppingCart[]
+  role             Role          @relation(fields: [idRole], references: [idRole])
+}
 
+//Modelo de Roles
+model Role {
+  idRole           Int           @id @default(autoincrement())
+  nameRole         String
+  status           Boolean
+  users            User[]
+  rolePermissions  RolePermissions[]
+}
+
+//Modelo tabla intermedia permisos, privilegios y rol
+model RolePermissions {
+  idRolePermissions Int           @id @default(autoincrement())
+  idRole            Int
+  idPermissions     Int
+  idPrivileges      Int
+  role              Role          @relation(fields: [idRole], references: [idRole])
+  permissions       Permissions   @relation(fields: [idPermissions], references: [idPermissions])
+  privileges        Privileges    @relation(fields: [idPrivileges], references: [idPrivileges])
+}
+
+//Modelo Permisos
+model Permissions {
+  idPermissions    Int           @id @default(autoincrement())
+  namePermission   String
+  rolePermissions  RolePermissions[]
+}
+
+//Modelo Privilegio
+model Privileges {
+  idPrivileges     Int           @id @default(autoincrement())
+  namePrivileges   String
+  rolePermissions  RolePermissions[]
+}
+
+//Modelo de Cliente
+model Client {
+  idClient         Int           @id @default(autoincrement())
+  idUser           Int
+  address          String
+  user             User          @relation(fields: [idUser], references: [idUser])
+  shippings        Shipping[]
+  shoppingCarts    ShoppingCart[]
+}
+
+//Modelo de Citas 
+model Appointments {
+  idAppointments   Int           @id @default(autoincrement())
+  idUser           Int
+  information      String
+  dateTime         DateTime
+  status           String
+  user             User          @relation(fields: [idUser], references: [idUser])
+}
+
+//Modelo de Adopción
+model Adoptions {
+  idAdoption       Int           @id @default(autoincrement())
+  idUser           Int
+  idPets           Int
+  status           String
+  monitoringStatus String
+  user             User          @relation(fields: [idUser], references: [idUser])
+  pet              Pets          @relation(fields: [idPets], references: [idPets])
+}
+
+//Modelo de Mascotas para Adoptar
+model Pets {
+  idPets           Int           @id @default(autoincrement())
+  namePet          String
+  age              Int
+  breed            String
+  status           String
+  image            String
+  description      String
+  adoptions        Adoptions[]
+}
+
+//Modelo de carrito
+model ShoppingCart {
+  idShoppingCart   Int           @id @default(autoincrement())
+  idClient         Int
+  idUser           Int?
+  quantityProduct  Int
+  numberId         String
+  unitPrice        Float
+  totalPrice       Float
+  client           Client        @relation(fields: [idClient], references: [idClient])
+  user             User?         @relation(fields: [idUser], references: [idUser])
+  payments         Payments[]
+  shoppingCartProducts ShoppingCartProducts[]
+  shippings        Shipping[]
+}
+
+//Modelo de tabla intermedia de carrito y productos
+model ShoppingCartProducts {
+  idShoppingCartProd Int         @id @default(autoincrement())
+  idShoppingCart     Int
+  idProduct          Int
+  quantity           Int
+  shoppingCart       ShoppingCart @relation(fields: [idShoppingCart], references: [idShoppingCart])
+  product            Products     @relation(fields: [idProduct], references: [idProduct])
+}
+
+//Modelo de productos
+model Products {
+  idProduct       Int           @id @default(autoincrement())
+  nameProduct     String
+  description     String
+  price           Float
+  stock           Int
+  category        String
+  image           String
+  shoppingCartProducts ShoppingCartProducts[]
+}
+
+//Modelo medios de pago
+model Payments {
+  idPayments      Int           @id @default(autoincrement())
+  idShoppingCart  Int
+  paymentMethod   String       
+  transactionId   String
+  amount          Float
+  paymentDate     DateTime
+  status          String
+  shoppingCart    ShoppingCart  @relation(fields: [idShoppingCart], references: [idShoppingCart])
+}
+
+//Modelo de envios
+model Shipping {
+  idShipping      Int           @id @default(autoincrement())
+  idClient        Int
+  idShoppingCart  Int
+  enterpriseShipping String
+  guide           String
+  status          String
+  client          Client        @relation(fields: [idClient], references: [idClient])
+  shoppingCart    ShoppingCart  @relation(fields: [idShoppingCart], references: [idShoppingCart])
 }
