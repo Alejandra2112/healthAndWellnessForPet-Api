@@ -17,12 +17,12 @@ export class PermissionsController {
         return this.permissions.postPermissions(data)
     }
 
-    @Put()
+    @Put(':idPermission')
     async putPermissions(@Param('idPermission') idPermission: string, data: Permissions) {
         return this.permissions.putPermissions(Number(idPermission), data)
     }
 
-    @Delete()
+    @Delete(':idPermission')
     async deletePermissions(@Param('idPermission') idPermission: string) {
         return this.permissions.deletePermissions(Number(idPermission))
     }
