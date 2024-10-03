@@ -11,8 +11,14 @@ export class RolePermissionsService {
 
     }
 
-    async postRolePermissions(data: RolePermissions): Promise<RolePermissions> {
-        return this.prisma.rolePermissions.create({ data })
+    postRolePermissions(data: { idRole: number; idPermissions: number; idPrivileges: number }): Promise<RolePermissions> {
+        return this.prisma.rolePermissions.create({
+            data: {
+                idRole: data.idRole,
+                idPermissions: data.idPermissions,
+                idPrivileges: data.idPrivileges
+            }
+        })
 
     }
 }

@@ -7,9 +7,10 @@ import { RoleModule } from './Role/role.module';
 import { ShippingModule } from './Shipping/shipping.module';
 import { AdoptionsModule } from './Adoptions/adoptions.module';
 import { PetsModule } from './Pets/pets.module';
+import { RolePermissionsModule } from './RolePermissions/rolePermissions.module';
 
 @Module({
-  imports: [UsersModule, RoleModule, ProductModule, PermissionsModule, PrivilegesModule, ShippingModule, AdoptionsModule, PetsModule],
+  imports: [UsersModule, RoleModule, ProductModule, PermissionsModule, PrivilegesModule, ShippingModule, AdoptionsModule, PetsModule, RolePermissionsModule],
   controllers: [],
   providers: [],
 })
