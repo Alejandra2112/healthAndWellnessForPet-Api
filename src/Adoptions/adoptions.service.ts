@@ -19,9 +19,40 @@ export class AdoptionsService {
     }
 
     async postAdoptions(data: Adoptions): Promise<Adoptions> {
+        const userExists = await this.prisma.user.findUnique({
+            where: {
+                idUser: data.idUser,
+            }
+        });
+
+        const petExits = await this.prisma.pets.findUnique({
+            where: {
+                idPets: data.idPets
+            }
+        })
+
+        if (!userExists && petExits) {
+            throw new Error(`El idPet ${data.idPets} o el idUser ${data.idUser} no existe`);
+        }
+
+        const changeStatusPet = await this.prisma.pets.update({
+            where: {
+                idPets: data.idPets
+            },
+            data: {
+                status: 'No Disponible'
+            }
+        })
+
+
         return await this.prisma.adoptions.create(
             {
-                data
+                data: {
+                    idPets: data.idPets,
+                    idUser: data.idUser,
+                    monitoringStatus: 'Pendiente',
+                    status: 'Adoptado'
+                }
             }
         )
     }

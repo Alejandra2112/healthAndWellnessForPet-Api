@@ -21,22 +21,34 @@ export class UsersService {
         })
     }
 
-    postUser(data: User): Promise <User>{
+    async postUser(data: User): Promise<User> {
+        data.status = true
+        const roleExists = await this.prisma.role.findUnique({
+            where: {
+                idRole: data.idRole,
+            }
+        });
+
+        if (!roleExists) {
+            throw new Error(`El idRole ${data.idRole} no existe`);
+        }
+
+
         return this.prisma.user.create({
             data
-        })
+        });
     }
 
-    putUser(idUser: number, data: User): Promise <User>{
+    putUser(idUser: number, data: User): Promise<User> {
         return this.prisma.user.update({
             where: {
                 idUser
-            }, 
+            },
             data
         })
     }
 
-    deleteUser(idUser: number): Promise<User>{
+    deleteUser(idUser: number): Promise<User> {
         return this.prisma.user.delete({
             where: {
                 idUser
